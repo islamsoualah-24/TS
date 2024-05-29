@@ -244,6 +244,7 @@ class Model(nn.Module):
         self.rev = RevIN(configs.enc_in)
 
         self.backbone = Backbone(configs)
+        self.Backbone_cov = Backbone_cov(configs)
 
         self.seq_len = configs.seq_len
         self.pred_len = configs.pred_len
