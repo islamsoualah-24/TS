@@ -109,7 +109,7 @@ class Mixer_Layer(nn.Module):
         # self.batchNorm2D = nn.LayerNorm([time_dim, feat_dim]) # the norm of the paper, seems bad
         self.batchNorm2D = nn.BatchNorm1d(time_dim)
         self.MLP_time = Mlp_time(time_dim, time_dim)
-        # self.MLP_feat = Mlp_feat(feat_dim, feat_dim)
+        self.MLP_feat = Mlp_feat(feat_dim, feat_dim)
 
     def forward(self, x): # # B, L, D -> B, L, D
         res1 = x
