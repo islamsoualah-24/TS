@@ -138,12 +138,11 @@ class Backbone(nn.Module):
         self.conv_layer = nn.Conv1d(in_channels=self.enc_in, out_channels=self.enc_in, kernel_size=3, padding=1)
     def forward(self, x): # B, L, D -> B, H, D
         # Apply convolutional layer
-        x = self.conv_layer(x)  # B, D, L -> B, D, L
+        #x = self.conv_layer(x)  # B, D, L -> B, D, L
         n_block = 6
         for _ in range(n_block):
            x = self.mix_layer(x)# B, L, D -> B, L, D
-        #x = self.backbone1(x)
-        x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
+        #x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
         return x
 
 class Mlp(nn.Module):
@@ -151,24 +150,32 @@ class Mlp(nn.Module):
         super().__init__()
         out_features = out_features or in_features
         hidden_features = hidden_features or in_features
-        self.fc1 = nn.Linear(in_features, out_features)
+        self.fc1 = nn.Linear(in_features, hidden_features)
+        self.act = nn.GELU()
+        self.fc2 = nn.Linear(hidden_features, out_features)
+        self.drop = nn.Dropout(drop)
+
     def forward(self, x):
         x = self.fc1(x)
+        x = self.act(x)
+        x = self.drop(x)
+        x = self.fc2(x)
+        x = self.drop(x)
         return x
         
-class Backbone1(nn.Module):
+class Backbone_cov(nn.Module):
     def __init__(self, configs):
-        super(Backbone, self).__init__()
+        super(Backbone_cov, self).__init__()
 
         self.seq_len = seq_len = configs.seq_len
         self.pred_len = pred_len = configs.pred_len
 
         # Patching
-        self.patch_len = patch_len = configs.patch_len # 16
-        self.stride = stride = configs.stride  # 8
+        self.patch_len = patch_len = 16 # 16
+        self.stride = stride = 8  # 8
         self.patch_num = patch_num = int((seq_len - patch_len) / stride + 1)
-        self.padding_patch = configs.padding_patch
-        if configs.padding_patch == 'end':  # can be modified to general case
+        self.padding_patch = "end"
+        if self.padding_patch == 'end':  # can be modified to general case
             self.padding_patch_layer = nn.ReplicationPad1d((0, stride))
             self.patch_num = patch_num = patch_num + 1
 
@@ -213,10 +220,6 @@ class Backbone1(nn.Module):
         z = self.embed(z) # B * D, L, P -> # B * D, L, d
         z = self.dropout_embed(z)
 
-        # 2
-        z_res = self.lin_res(z.reshape(B, D, -1)) # B * D, L, d -> B, D, L * d -> B, D, H
-        z_res = self.dropout_res(z_res)
-
         # 3.1
         res = self.depth_res(z) # B * D, L, d -> B * D, L, P
         z_depth = self.depth_conv(z) # B * D, L, d -> B * D, L, P
@@ -232,8 +235,7 @@ class Backbone1(nn.Module):
         # 4
         z_mlp = self.mlp(z_point) # B, D, L * P -> B, D, H
 
-        return (z_res).permute(0,2,1)
-
+        return ( z_mlp).permute(0,2,1)
 
 class Model(nn.Module):
 
@@ -250,6 +252,7 @@ class Model(nn.Module):
     def forward(self, x, batch_x_mark, dec_inp, batch_y_mark):
         z = self.rev(x, 'norm') # B, L, D -> B, L, D
         z = self.backbone(z) # B, L, D -> B, H, D
+        z = self.Backbone_cov(z)
         z = self.rev(z, 'denorm') # B, H, D -> B, H, D
         return z
 
