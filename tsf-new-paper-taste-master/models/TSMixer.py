@@ -133,19 +133,29 @@ class Backbone(nn.Module):
         self.layer_num = layer_num = 1
 
         self.mix_layer = Mixer_Layer(seq_len, enc_in)
-        self.temp_proj = nn.Linear(self.seq_len, self.pred_len)
+        #self.temp_proj = nn.Linear(self.seq_len, self.pred_len)
         # Define a convolutional layer
         self.conv_layer = nn.Conv1d(in_channels=self.enc_in, out_channels=self.enc_in, kernel_size=3, padding=1)
     def forward(self, x): # B, L, D -> B, H, D
         # Apply convolutional layer
-        x = x.permute(0, 2, 1)  # B, L, D -> B, D, L
         x = self.conv_layer(x)  # B, D, L -> B, D, L
-        x = x.permute(0, 2, 1)  # B, D, L -> B, L, D
         n_block = 6
         for _ in range(n_block):
-           x = self.mix_layer(x) # B, L, D -> B, L, D
-        x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
+           x = self.mix_layer(x)# B, L, D -> B, L, D
+        x = self.backbone1(z)
+        #x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
         return x
+
+class Mlp(nn.Module):
+    def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
+        super().__init__()
+        out_features = out_features or in_features
+        hidden_features = hidden_features or in_features
+        self.fc1 = nn.Linear(in_features, out_features)
+    def forward(self, x):
+        x = self.fc1(x)
+        return x
+        
 class Backbone1(nn.Module):
     def __init__(self, configs):
         super(Backbone, self).__init__()
