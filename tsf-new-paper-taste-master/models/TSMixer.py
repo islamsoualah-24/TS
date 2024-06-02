@@ -135,12 +135,12 @@ class Backbone(nn.Module):
         self.mix_layer = Mixer_Layer(seq_len, enc_in)
         self.temp_proj = nn.Linear(self.seq_len, self.pred_len)
         # Define a convolutional layer
-        #self.conv_layer = nn.Conv1d(in_channels=self.enc_in, out_channels=self.enc_in, kernel_size=3, padding=1)
+        self.conv_layer = nn.Conv1d(in_channels=self.enc_in, out_channels=self.enc_in, kernel_size=3, padding=1)
     def forward(self, x): # B, L, D -> B, H, D
         # Apply convolutional layer
-        #x = x.permute(0, 2, 1)  # B, L, D -> B, D, L
-        #x = self.conv_layer(x)  # B, D, L -> B, D, L
-        #x = x.permute(0, 2, 1)  # B, D, L -> B, L, D
+        x = x.permute(0, 2, 1)  # B, L, D -> B, D, L
+        x = self.conv_layer(x)  # B, D, L -> B, D, L
+        x = x.permute(0, 2, 1)  # B, D, L -> B, L, D
         n_block = 8
         for _ in range(n_block):
            x = self.mix_layer(x)# B, L, D -> B, L, D
