@@ -10,7 +10,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-class Weather_Dataset(Dataset):
+class  TSFDataLoader :
     DATA_DIR = 'gs://time_series_datasets'
     LOCAL_CACHE_DIR = './dataset/'
 
