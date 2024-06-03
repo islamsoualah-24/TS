@@ -10,6 +10,32 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+class Weather_Dataset:
+    def __init__(self, root_path, data_path, seq_len, pred_len, features, target, timeenc):
+        self.root_path = root_path
+        self.data_path = data_path
+        self.seq_len = seq_len
+        self.pred_len = pred_len
+        self.features = features
+        self.target = target
+        self.timeenc = timeenc
+        self.__read_data__()
+
+    def __read_data__(self):
+        # Load and process data from csv file
+        file_path = os.path.join(self.root_path, self.data_path)
+        self.data = pd.read_csv(file_path)
+        # Process the data as needed (e.g., normalization, feature extraction)
+
+    def __getitem__(self, index):
+        # Extract and return the input-output pairs
+        seq_x = self.data[index:index + self.seq_len]
+        seq_y = self.data[index + self.seq_len:index + self.seq_len + self.pred_len]
+        return seq_x, seq_y
+
+    def __len__(self):
+        # Return the size of the dataset
+        return len(self.data) - self.seq_len - self.pred_len + 1
 
 class Dataset_ETT_hour(Dataset):
     def __init__(self, root_path, flag='train', size=None,
