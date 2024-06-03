@@ -16,7 +16,7 @@ class TSFDataLoader:
   """Generate data loader from raw data."""
 
   def __init__(
-      self, data, batch_size, seq_len, pred_len, feature_type, target='OT', root_path
+      self, data, batch_size, seq_len, pred_len, feature_type, target='OT'
   ):
     self.data = data
     self.batch_size = batch_size
