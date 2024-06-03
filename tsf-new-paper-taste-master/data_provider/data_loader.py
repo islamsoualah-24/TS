@@ -11,7 +11,10 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Weather_Dataset:
-    def __init__(self, root_path, data_path, seq_len, pred_len, features, target, timeenc ,flag='train'):
+    def __init__(self, root_path, data_path, seq_len, pred_len,
+                 features='S', target ='OT', timeenc =0 ,flag='train',
+                 size=None ,scale=True, freq='h'):
+                     
         self.root_path = root_path
         self.data_path = data_path
         self.seq_len = seq_len
