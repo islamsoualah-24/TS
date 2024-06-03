@@ -14,6 +14,14 @@ class Weather_Dataset:
     def __init__(self, root_path, data_path, seq_len, pred_len,
                  features='S', target ='OT', timeenc =0 ,flag='train',
                  size=None ,scale=True, freq='h'):
+        if size == None:
+            self.seq_len = 24 * 4 * 4
+            self.label_len = 24 * 4
+            self.pred_len = 24 * 4
+        else:
+            self.seq_len = size[0]
+            self.label_len = size[1]
+            self.pred_len = size[2]
                      
         self.root_path = root_path
         self.data_path = data_path
