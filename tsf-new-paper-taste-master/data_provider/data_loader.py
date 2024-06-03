@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Weather_Dataset:
-    def __init__(self, root_path, data_path, seq_len, pred_len, features, target, timeenc):
+    def __init__(self, root_path, data_path, seq_len, pred_len, features, target, timeenc ,flag='train'):
         self.root_path = root_path
         self.data_path = data_path
         self.seq_len = seq_len
@@ -20,7 +20,11 @@ class Weather_Dataset:
         self.target = target
         self.timeenc = timeenc
         self.__read_data__()
-
+        # init
+        assert flag in ['train', 'test', 'val']
+        type_map = {'train': 0, 'val': 1, 'test': 2}
+        self.set_type = type_map[flag]
+        
     def __read_data__(self):
         # Load and process data from csv file
         file_path = os.path.join(self.root_path, self.data_path)
@@ -61,7 +65,6 @@ class Dataset_ETT_hour(Dataset):
         self.scale = scale
         self.timeenc = timeenc
         self.freq = freq
-
         self.root_path = root_path
         self.data_path = data_path
         self.__read_data__()
