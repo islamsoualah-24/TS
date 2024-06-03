@@ -9,12 +9,14 @@ from utils.timefeatures import time_features
 import warnings
 
 warnings.filterwarnings('ignore')
+DATA_DIR = 'gs://time_series_datasets'
+LOCAL_CACHE_DIR = '/content/TS/tsf-new-paper-taste-master'
 
 class TSFDataLoader:
   """Generate data loader from raw data."""
 
   def __init__(
-      self, data, batch_size, seq_len, pred_len, feature_type, target='OT'
+      self, data, batch_size, seq_len, pred_len, feature_type, target='OT', root_path
   ):
     self.data = data
     self.batch_size = batch_size
