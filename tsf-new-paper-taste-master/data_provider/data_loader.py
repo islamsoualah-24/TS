@@ -11,6 +11,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Weather_Dataset(Dataset):
+    DATA_DIR = 'gs://time_series_datasets'
+    LOCAL_CACHE_DIR = './dataset/'
+
     def __init__(
         self, data, batch_size, seq_len, pred_len, feature_type, target='OT'
     ):
