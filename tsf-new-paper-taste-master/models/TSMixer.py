@@ -253,9 +253,9 @@ class Model(nn.Module):
 
 
     def forward(self, x, batch_x_mark, dec_inp, batch_y_mark):
-        #z = self.rev(x, 'norm') # B, L, D -> B, L, D
+        z = self.rev(x, 'norm') # B, L, D -> B, L, D
         z = self.backbone(x) # B, L, D -> B, H, D
         #z = self.Backbone_cov(z)
-        #z = self.rev(z, 'denorm') # B, H, D -> B, H, D
+        z = self.rev(z, 'denorm') # B, H, D -> B, H, D
         return z
 
