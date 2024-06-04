@@ -141,10 +141,10 @@ class Backbone(nn.Module):
         #x = x.permute(0, 2, 1)  # B, L, D -> B, D, L
         #x = self.conv_layer(x)  # B, D, L -> B, D, L
         #x = x.permute(0, 2, 1)  # B, D, L -> B, L, D
-        n_block = 6
+        n_block = 8
         for _ in range(n_block):
            x = self.mix_layer(x)# B, L, D -> B, L, D
-        x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
+        #x = self.temp_proj(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, H, D
         return x
 
 class Mlp(nn.Module):
@@ -255,7 +255,7 @@ class Model(nn.Module):
     def forward(self, x, batch_x_mark, dec_inp, batch_y_mark):
         z = self.rev(x, 'norm') # B, L, D -> B, L, D
         z = self.backbone(x) # B, L, D -> B, H, D
-        #z = self.Backbone_cov(z)
+        z = self.Backbone_cov(z)
         z = self.rev(z, 'denorm') # B, H, D -> B, H, D
         return z
 
