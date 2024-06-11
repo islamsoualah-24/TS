@@ -117,10 +117,10 @@ class Mixer_Layer(nn.Module):
         x = self.MLP_time(x.permute(0, 2, 1)).permute(0, 2, 1) # B, L, D -> B, D, L -> B, D, L -> B, L, D
         x = x + res1
 
-        #res2 = x
-        #x = self.batchNorm2D(x)
-        #x = self.MLP_feat(x) # B, L, D -> B, L, D
-        #x = x + res2
+        res2 = x
+        x = self.batchNorm2D(x)
+        x = self.MLP_feat(x) # B, L, D -> B, L, D
+        x = x + res2
         return x
 
 class Backbone(nn.Module):
